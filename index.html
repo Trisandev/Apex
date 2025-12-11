@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>কুইজ অ্যাসিস্ট্যান্ট - সাধারণ জ্ঞান</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+<style>
+    /* বেসিক রিসেট এবং ফন্ট */
+    :root {
+        --ai-bg: #e5efff; /* হালকা নীল */
+        --user-bg: #f0f2f5; /* ভারতের প্রেক্ষাপটে ব্যবহৃত হালকা ধূসর/নীল ব্যাকগ্রাউন্ড */
+        --primary-color: #007bff; /* অ্যাকসেন্ট ব্লু (ভালো ভিজিবিলিটি) */
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+        --secondary-color: #6c757d; /* নতুন ব্যাক বাটন কালার */
+    }
+
+    body{
+        margin:0;
+        font-family: 'Noto Sans Bengali', ariel;
+        background: var(--user-bg);
+        display:flex;
+        justify-content:center;
+        padding-top: 0;
+        min-height: 100vh;
+    }
+    .container{
+        width:100%;
+        max-width: 500px;
+        background:white;
+        padding: 0 15px 15px 15px;
+        box-shadow:0 0 15px rgba(0,0,0,0.1);
+        min-height: 100vh;
+        box-sizing: border-box;
+    }
+
+    /* --- নতুন হেডার (ব্যাক বাটন সহ) --- */
+    .header {
+        background: white;
+        padding: 15px 0;
+        margin-bottom: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .logo{
+        font-family:"ariel";
+        font-size:18px;
+        font-weight:bold;
+    }
+    .back-button {
+        background: none;
+        border: none;
+        color: var(--secondary-color);
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px;
+        transition: color 0.2s;
+    }
+    .back-button:hover {
+        color: var(--primary-color);
+    }
+    .score-balance {
+        background: #f0f8ff; /* হালকা নীল */
+        color: var(--primary-color);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 700;
+        border: 1px solid var(--primary-color);
+    }
+
+    /* --- চ্যাট স্টাইল (পরিবর্তন নেই) --- */
+    .chat-message {
+        padding: 12px 15px;
+        border-radius: 18px;
+        margin-bottom: 15px;
+        line-height: 1.6;
+        font-size: 16px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .ai-question {
+        background: var(--ai-bg);
+        border-bottom-left-radius: 4px;
+        margin-right: 5%; 
+        font-weight: 500;
+        color: #1a1a1a;
+    }
+
+    .ai-explanation {
+        background: #e6f7ff;
+        border-radius: 18px;
+        border-top-left-radius: 4px;
+        margin-right: 5%;
+        font-size: 15px;
+        margin-top: 15px;
+        border: 1px solid #cceeff;
+    }
+    
+    /* --- অপশন এবং বাটন (ব্যবহারকারী-বান্ধব করার জন্য প্যাডিং বৃদ্ধি) --- */
+    .options button{
+        width:100%;
+        padding:16px; /* প্যাডিং বৃদ্ধি */
+        margin-bottom:12px; /* মার্জিন বৃদ্ধি */
+        border-radius:12px;
+        border:1px solid #ccc;
+        background:white;
+        font-size:16px;
+        cursor:pointer;
+        transition:background 0.2s, border-color 0.2s;
+        text-align: left;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* হালকা শ্যাডো বৃদ্ধি */
+    }
+    .options button:hover:not(:disabled){
+        background: #f0f0f0;
+    }
+    .options button:active{
+        transform: scale(0.98);
+    }
+    
+    .options button.correct {
+        background: #d4edda;
+        border-color: var(--success-color);
+        color: var(--success-color);
+        font-weight: 700;
+    }
+
+    .options button.incorrect {
+        background: #f8d7da;
+        border-color: var(--danger-color);
+        color: var(--danger-color);
+        font-weight: 500;
+        opacity: 0.9;
+    }
+
+    .btn-row{
+        margin-top:20px;
+        display:flex;
+        flex-wrap: wrap; 
+        gap:10px; /* ব্যবধান বৃদ্ধি */
+    }
+    .btn{
+        padding:14px 8px; /* প্যাডিং বৃদ্ধি */
+        border-radius:12px;
+        border:none;
+        cursor:pointer;
+        font-weight:700; /* ফন্ট ওয়েট বৃদ্ধি */
+        flex: 1 1 calc(50% - 5px); 
+        min-width: 100px; 
+        font-size: 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: background 0.2s;
+    }
+    .start{
+        background:var(--primary-color);
+        color:white;
+    }
+    .small{
+        background:white;
+        color:#333;
+        border:1px solid #ddd;
+    }
+    .small:disabled {
+        background: #f8f8f8;
+        border-color: #eee;
+        color: #aaa;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+    .small:not(:disabled):hover {
+        background: #f0f0f0;
+    }
+
+    .hint-box{
+        margin-top:12px;
+        background:#fff3cd;
+        padding:12px;
+        border-radius:10px;
+        font-size:15px;
+        color:#856404;
+        border: 1px solid #ffeeba;
+    }
+
+    /* --- লোডিং অ্যানিমেশন (পরিবর্তন নেই) --- */
+    .loading span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #666;
+        border-radius: 50%;
+        margin: 0 2px;
+        animation: bounce 0.6s infinite alternate;
+    }
+    .loading span:nth-child(2) { animation-delay: 0.2s; }
+    .loading span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+        to { transform: translateY(-5px); background: var(--primary-color); }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <button class="back-button" onclick="goToIndex()"><i class="fas fa-arrow-left"></i></button>
+        <div class="logo">Apex Quiz</div>
+        <div class="score-balance" id="score">Score: 0</div>
+    </div>
+    
+    <div class="ai-question chat-message" id="question">শুরু করুন বাটনে ক্লিক করে প্রথম প্রশ্নটি আনুন।</div>
+
+    <div class="options" id="options"></div>
+
+    <div class="hint-box" id="hint" style="display:none;"></div>
+
+    <div class="ai-explanation chat-message" id="explain" style="display:none;"></div>
+
+    <div class="btn-row">
+        <button class="btn start" onclick="startQuiz()" id="startBtn">শুরু করুন</button>
+        <button class="btn small" onclick="nextQuestion()" id="nextBtn" disabled><i class="fas fa-arrow-right"></i> পরবর্তী</button>
+        <button class="btn small" onclick="skip()"><i class="fas fa-forward"></i> এড়িয়ে যান (-৫)</button>
+        <button class="btn small" onclick="useFifty()" id="fiftyBtn"><i class="fas fa-divide"></i> ৫০/৫০</button>
+        <button class="btn small" onclick="useHint()" id="hintBtn"><i class="fas fa-lightbulb"></i> হিন্ট</button>
+    </div>
+</div>
+
+<script>
+
+let score = 0;
+let correctIndex = null;
+let currentData = null;
+let optionsList = [];
+let questionActive = false;
+let fiftyUsed = false;
+let hintUsed = false;
+let answered = false;
+
+// DOM উপাদান
+const scoreEl = document.getElementById("score");
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const hintEl = document.getElementById("hint");
+const explainEl = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const fiftyBtn = document.getElementById("fiftyBtn");
+const hintBtn = document.getElementById("hintBtn");
+const startBtn = document.getElementById("startBtn");
+
+// বাংলাতে নম্বর
+const banglaNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+function toBengaliNumber(n) {
+    if (n === null || n === undefined) return '০';
+    return n.toString().split('').map(digit => {
+        const intVal = parseInt(digit);
+        return isNaN(intVal) ? digit : banglaNumbers[intVal];
+    }).join('');
+}
+
+// দ্রুত লোডের জন্য Fetch ফাংশন
+async function fetchRandom(lang = 'bn'){
+    let url = `https://${lang}.wikipedia.org/api/rest_v1/page/random/summary`;
+    let res = await fetch(url, {cache: 'no-store'});
+    if (!res.ok) throw new Error("API Load Error");
+    return res.json();
+}
+
+function shuffle(arr){
+    for(let i=arr.length-1; i>0; i--){
+        let j = Math.floor(Math.random()* (i+1));
+        [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+}
+
+function showLoading() {
+    questionEl.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> বিশ্লেষণমূলক প্রশ্ন তৈরি হচ্ছে...`;
+    optionsEl.innerHTML = `<div class="loading"><span></span><span></span><span></span></div>`;
+    questionEl.classList.add('ai-question');
+}
+
+// *** অ্যাডভান্সড প্রশ্ন তৈরির নতুন লজিক ***
+function createAdvancedQuestion(extract, title) {
+    let sentences = extract.match(/[^।?!.]+[।?!.]/g) || [extract];
+    
+    // 1. সাল/তারিখ খোঁজা (Year/Date-based Question)
+    // বাংলা সাল ফরম্যাট: \d{4} (চারটি সংখ্যা)
+    let yearMatch = extract.match(/\d{4}/);
+    if (yearMatch && sentences.length > 1) {
+        // সালটি প্রথম বাক্য থেকে ভিন্ন কোনো বাক্যে থাকতে হবে
+        let year = yearMatch[0];
+        let yearSentence = sentences.find(s => s.includes(year) && !sentences[0].includes(year));
+        
+        if (yearSentence) {
+            let questionText = `**${title}** সম্পর্কিত তথ্যের ভিত্তিতে, ${year} সালে কী ঘটেছিল/শুরু হয়েছিল? (অপশনগুলো শিরোনাম)`;
+            let hintText = yearSentence.trim();
+            
+            // অপশনগুলো শিরোনাম হবে, কিন্তু প্রশ্নের মূল ফোকাস তারিখ।
+            return {
+                questionText: questionText,
+                hintText: `নিবন্ধে ${year} সালের উল্লেখ আছে।`,
+                type: 'Year'
+            };
+        }
+    }
+
+    // 2. তথ্যভিত্তিক প্রশ্ন (Fact-based Question)
+    if (sentences.length > 2) {
+        // মাঝের বাক্যটিকে মূল তথ্য হিসেবে ধরা হলো, যা প্রথম বাক্য থেকে দূরে
+        let keyInfoSentence = sentences[Math.floor(sentences.length / 2)]; 
+        
+        let questionText = `নিচে কোন শিরোনামের নিবন্ধে এই তথ্যটি পাওয়া যায়: "${keyInfoSentence.trim()}"?`;
+        let hintText = `নিবন্ধে এই বাক্যটি উল্লেখ করা হয়েছে: "${keyInfoSentence.trim()}"`;
+        
+        return {
+            questionText: questionText,
+            hintText: hintText,
+            type: 'Fact'
+        };
+    }
+
+    // 3. ডিফল্ট সারাংশ যাচাই প্রশ্ন (Summary Validation - যদি অন্য কিছু না পাওয়া যায়)
+    let displayExtract = extract.slice(0, 250).trim() + (extract.length > 250 ? "..." : "");
+    let questionText = `এই সংক্ষিপ্ত বিশ্লেষণটি (${displayExtract}) নিচের কোন শিরোনামের?`;
+    let hintText = sentences[0].trim();
+    
+    return { 
+        questionText: questionText,
+        hintText: `নিবন্ধটির প্রথম বাক্য: "${hintText}"`,
+        type: 'Summary'
+    };
+}
+
+
+async function generate(){
+    questionActive = true;
+    answered = false;
+    fiftyUsed = false;
+    hintUsed = false;
+
+    // UI রিসেট
+    nextBtn.disabled = true;
+    fiftyBtn.disabled = false;
+    hintBtn.disabled = false;
+    hintEl.style.display="none";
+    explainEl.style.display="none";
+    explainEl.innerText = "";
+    showLoading(); 
+    
+    try {
+        let page = await fetchRandom();
+        let title = page.title;
+        let extract = page.extract;
+        let contentUrl = page.content_urls.desktop.page; 
+
+        if (!extract || extract.length < 100 || title.includes(':')) {
+             // ছোট বা বিশেষ পাতা এড়িয়ে যাওয়া
+             return await generate();
+        }
+
+        // উন্নত প্রশ্ন তৈরি
+        const { questionText, hintText } = createAdvancedQuestion(extract, title);
+        
+        // ভুল উত্তর সংগ্রহ
+        let wrongs = [];
+        let promises = [fetchRandom(), fetchRandom(), fetchRandom(), fetchRandom()];
+        let results = await Promise.all(promises);
+        
+        results.forEach(d => {
+            if(d.title !== title && !wrongs.includes(d.title) && !d.title.includes(':')) wrongs.push(d.title);
+        });
+        
+        while(wrongs.length < 3) {
+             let d = await fetchRandom();
+             if(d.title !== title && !wrongs.includes(d.title) && !d.title.includes(':')) wrongs.push(d.title);
+        }
+        wrongs = wrongs.slice(0, 3); 
+        
+        let opts = shuffle([title, ...wrongs]);
+
+        correctIndex = opts.indexOf(title);
+        currentData = {title, extract, contentUrl, hintText}; 
+        optionsList = opts;
+
+        // প্রশ্ন দেখানো
+        questionEl.innerHTML = `**বিষয়:** অ্যাডভান্সড কুইজ<br><br>${questionText}`;
+
+        renderOptions();
+    } catch (error) {
+        console.error("প্রশ্ন লোড করতে সমস্যা:", error);
+        questionEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i> দুঃখিত, উন্নত প্রশ্ন লোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।`;
+        questionActive = false;
+        optionsEl.innerHTML = "";
+    }
+}
+
+function renderOptions(){
+    optionsEl.innerHTML = "";
+    optionsList.forEach((o,i)=>{
+        if(o===null) return;
+        let btn = document.createElement("button");
+        btn.innerText = o;
+        btn.onclick = ()=> checkAnswer(i);
+        btn.setAttribute('data-index', i);
+        optionsEl.appendChild(btn);
+    });
+}
+
+function disableOptions() {
+    optionsEl.querySelectorAll('button').forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add('disabled-btn');
+    });
+}
+
+function updateScore(points) {
+    score += points;
+    scoreEl.innerText = "Score: " + toBengaliNumber(score);
+}
+
+function checkAnswer(i){
+    if (!questionActive || answered) return;
+
+    answered = true;
+    nextBtn.disabled = false;
+    fiftyBtn.disabled = true;
+    hintBtn.disabled = true;
+    disableOptions();
+
+    let isCorrect = (i === correctIndex);
+    let points = isCorrect ? 20 : -8; // পয়েন্ট আরও বৃদ্ধি
+    updateScore(points);
+
+    // অপশন হাইলাইট
+    optionsEl.querySelectorAll('button').forEach(btn => {
+        let index = parseInt(btn.getAttribute('data-index'));
+        if (index === correctIndex) {
+            btn.classList.add('correct');
+            btn.classList.remove('disabled-btn');
+        } else if (index === i) {
+            btn.classList.add('incorrect');
+            btn.classList.remove('disabled-btn');
+        }
+    });
+
+    // ব্যাখ্যা দেখানো (উইকিপিডিয়া লিঙ্ক সহ)
+    const wikipediaLink = `<a href="${currentData.contentUrl}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 700;">উইকিপিডিয়ায় সম্পূর্ণ নিবন্ধটি পড়ুন <i class="fas fa-external-link-alt"></i></a>`;
+
+    explainEl.style.display = 'block';
+    explainEl.innerHTML = (isCorrect ? `✅ **সুপার সঠিক!** (+${toBengaliNumber(20)} পয়েন্ট)` : `❌ **ভুল।** (-${toBengaliNumber(8)} পয়েন্ট)`) + 
+                          `<br><br>**সঠিক উত্তর:** **${optionsList[correctIndex]}**` + 
+                          `<br><br>নিবন্ধের সারাংশ: <span style="color:#555;">${currentData.extract}</span>` +
+                          `<br><br>**বিশ্লেষণ:** ${wikipediaLink}`;
+}
+
+function nextQuestion(){
+    if (!questionActive && answered) return; 
+    generate();
+}
+
+function skip(){
+    if (!questionActive || answered) return;
+    
+    updateScore(-10); // স্কিপের জন্য জরিমানা বৃদ্ধি
+    
+    explainEl.style.display = 'block';
+    explainEl.innerHTML = `⏩ **এড়িয়ে যাওয়া হলো।** (-${toBengaliNumber(10)} পয়েন্ট)<br>সঠিক উত্তর ছিল: **${optionsList[correctIndex]}**।`;
+    
+    answered = true;
+    nextBtn.disabled = false;
+    fiftyBtn.disabled = true;
+    hintBtn.disabled = true;
+    disableOptions();
+}
+
+function startQuiz(){
+    score = 0;
+    scoreEl.innerText = "Score: 0";
+    generate();
+    startBtn.innerHTML = '<i class="fas fa-sync-alt"></i> পুনরায় শুরু';
+}
+
+function useHint(){
+    if (!questionActive || answered || hintUsed) return;
+    if (score < 10) { // হিন্টের খরচ বৃদ্ধি
+        alert("হিন্ট ব্যবহার করতে কমপক্ষে ১০ পয়েন্ট প্রয়োজন।");
+        return;
+    }
+    
+    hintUsed = true;
+    hintBtn.disabled = true;
+    updateScore(-10); // হিন্টের জন্য জরিমানা
+    hintEl.style.display="block";
+    
+    // উন্নত হিন্ট: প্রশ্ন তৈরি করার জন্য ব্যবহৃত মূল তথ্য দেখানো
+    const hintText = currentData.hintText || "দুঃখিত, কোনো সুনির্দিষ্ট হিন্ট খুঁজে পাওয়া যায়নি।";
+
+    hintEl.innerHTML = `<i class="fas fa-lightbulb"></i> **বিশেষ হিন্ট (-${toBengaliNumber(10)}):** এই ক্লুটির ভিত্তিতে উত্তর দিন: "${hintText}"`;
+}
+
+function useFifty(){
+    if (!questionActive || answered || fiftyUsed) return;
+    if (score < 15) { // ৫০/৫০ এর খরচ বৃদ্ধি
+        alert("৫০/৫০ ব্যবহার করতে কমপক্ষে ১৫ পয়েন্ট প্রয়োজন।");
+        return;
+    }
+    
+    fiftyUsed = true;
+    fiftyBtn.disabled = true;
+    updateScore(-15); // ৫০/৫০ এর জন্য জরিমানা
+    
+    let fake = optionsList.map((o,i)=> i !== correctIndex ? i : null)
+                         .filter(e=>e!==null);
+
+    shuffle(fake);
+    let removeTwo = fake.slice(0,2);
+
+    removeTwo.forEach(i=> optionsList[i] = null);
+    
+    // UI-তে ব্যবহারের বার্তা
+    hintEl.style.display="block";
+    hintEl.innerHTML = `<i class="fas fa-divide"></i> **৫০/৫০ (-${toBengaliNumber(15)})** ব্যবহার করা হয়েছে। দুটি ভুল উত্তর সরানো হয়েছে।`;
+
+    renderOptions();
+}
+
+// নতুন ফাংশন: ব্যাক বাটনে ক্লিক করলে
+function goToIndex() {
+    // index.html এ নিয়ে যাওয়ার জন্য
+    window.location.href = "index.html"; 
+}
+
+// কুইজ শুরু হলে স্কোর ০ হবে
+document.addEventListener('DOMContentLoaded', () => {
+    scoreEl.innerText = "Score: 0";
+});
+
+
+</script>
+
+</body>
+</html>
